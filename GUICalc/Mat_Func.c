@@ -50,10 +50,10 @@ int getDet(int** mat, int n, MAT *matDim, FLAGS *flags)
 {
     int D = 0; // Initialize result
 
-    if (matDim->n != matDim->m) {
-        flags->detErr = true;
+    if (matDim->n != matDim->m || (!(matDim->n) || !(matDim->m))) {
+        flags->err = true;
         MessageBox(NULL,
-            _T("Can't calculate determinante - Matrix is not square"),
+            _T("Can't calculate determinante - Matrix is not square or not initialized"),
             _T("Error"),
             NULL);
         return;
@@ -86,4 +86,31 @@ int getDet(int** mat, int n, MAT *matDim, FLAGS *flags)
     }
 
     return D;
+}
+
+
+int **matMultiply(int** mat_a, int** mat_b, MAT* mat_a_dim, MAT* mat_b_dim, FLAGS *flags) {
+
+    if (mat_a_dim->m != mat_b_dim->n) {
+        MessageBox(NULL, _T("Cannot multiply A and B. Dimentions does not match"), _T("Error"), NULL);
+        flags->err = true;
+        return NULL;
+    }
+
+    int matDim[2] = {mat_a_dim->n, mat_b_dim->m};
+    int** resMat = initMat(matDim);
+    int sum = 0;
+    wchar_t buff[2] = { 0 };
+
+    for (int i = 0; i < mat_a_dim->n; i++)
+    {
+        for (int j = 0; j < mat_b_dim->m; j++)
+        {
+            for (int k = 0; k < mat_a_dim->m; k++)
+            {
+                resMat[i][j] += mat_a[i][k] * mat_b[k][j];
+            }
+        }
+    }
+    return resMat;
 }
